@@ -6,12 +6,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Home, Settings, User } from "lucide-react";
+import { config } from "@/config/config";
+import { Component, FileText, Home, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { config } from "@/config/config";
-import { FileIcon } from "@radix-ui/react-icons";
 
 interface NavInterface {
   name: string;
@@ -64,22 +63,66 @@ const SidebarNavs: React.FC = () => {
       >
         <AccordionItem value="item-1" className="border-none">
           <AccordionTrigger>
-            <p className="text-xs text-muted-foreground">Collections</p>
+            <p className="text-[10px] text-muted-foreground/70">Collections</p>
           </AccordionTrigger>
-          <AccordionContent className="pl-1">
+          <AccordionContent>
             {config.collections.map((collection, i) => (
-              <Link
-                key={i}
-                href={`/app/collections`}
-                className={`flex w-full items-center text-sm transition-all ${
-                  pathname === "app/collections/:id"
-                    ? "bg-muted text-primary"
-                    : "text-muted-foreground"
-                } hover:bg-muted rounded-md gap-2 p-1.5 px-2`}
-              >
-                <FileIcon />
-                <span className="text-sm">{collection.name}</span>
-              </Link>
+              <div key={i}>
+                {collection.type === "group" ? (
+                  <>
+                    <Accordion
+                      type="single"
+                      collapsible
+                      defaultValue="item-1"
+                      className="w-full pl-2"
+                    >
+                      <AccordionItem value="item-1" className="border-none">
+                        <AccordionTrigger
+                          style={{ padding: "0px", paddingBottom: "12px" }}
+                        >
+                          <p className="flex items-center text-muted-foreground gap-2 text-sm">
+                            <Component size={14} />
+                            {collection.name}
+                          </p>
+                        </AccordionTrigger>
+                        <AccordionContent className="pl-1">
+                          {collection.collections.map(
+                            (collection: any, i: number) => (
+                              <Link
+                                key={i}
+                                href={`/app/collections/${collection.collectionId}`}
+                                className={`flex w-full items-center text-sm transition-all ${
+                                  pathname ===
+                                  `/app/collections/${collection.collectionId}`
+                                    ? "bg-muted text-primary"
+                                    : "text-muted-foreground"
+                                } hover:bg-muted rounded-md gap-2 p-1.5 px-1`}
+                              >
+                                <FileText size={14} />
+                                <span className="text-sm">
+                                  {collection.name}
+                                </span>
+                              </Link>
+                            )
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </>
+                ) : (
+                  <Link
+                    href={`/app/collections/${collection.collectionId}`}
+                    className={`flex w-full items-center text-sm transition-all ${
+                      pathname === `/app/collections/${collection.collectionId}`
+                        ? "bg-muted text-primary"
+                        : "text-muted-foreground"
+                    } hover:bg-muted rounded-md gap-2 p-1.5 px-2`}
+                  >
+                    <FileText size={14} />
+                    <span className="text-sm">{collection.name}</span>
+                  </Link>
+                )}
+              </div>
             ))}
           </AccordionContent>
         </AccordionItem>

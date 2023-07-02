@@ -1,10 +1,18 @@
 "use client";
 
+import * as React from "react";
 import {
   ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -15,9 +23,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "./table";
 import { Button } from "./button";
-import { ArrowRight } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -25,11 +32,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./select";
+import { ArrowRight } from "lucide-react";
+import { ScrollArea } from "./scroll-area";
 
 interface DataTableProps<TData, TValue> {
-  pagination: boolean;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  pagination: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -37,23 +46,52 @@ export function DataTable<TData, TValue>({
   data,
   pagination,
 }: DataTableProps<TData, TValue>) {
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+    },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: pagination ? getPaginationRowModel() : undefined,
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
   return (
-    <>
-      <div className="rounded-md border">
+    <div className="space-y-4">
+      {/* <DataTableToolbar table={table} /> */}
+      <div
+        style={{
+          width: "calc(100vw - 300px)",
+        }}
+        className="rounded-md border"
+      >
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead className="bg-secondary" key={header.id}>
+                    <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -96,7 +134,6 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-
       {pagination && (
         <div className="flex items-center justify-between space-x-2 py-4">
           <div className="flex items-center space-x-2">
@@ -142,6 +179,6 @@ export function DataTable<TData, TValue>({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
