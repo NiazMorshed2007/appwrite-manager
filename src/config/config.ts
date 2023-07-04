@@ -3,59 +3,77 @@ import { IConfig } from "@/interfaces/IConfig";
 export const config: IConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
   projectId: "6475ca5453bd7b131cd8",
-  project_name: "Appwrite Manager",
+  projectName: "Popwola Project",
+  projectLogo: "/logo.png",
   databaseId: "6477edd01cdd300e0b80",
-  collections: [
+  groups: [
     {
       name: "Marketing",
-      type: "group",
-      collections: [
+      id: "marketing",
+    },
+  ],
+  collections: [
+    {
+      name: "Campaigns",
+      collectionId: "647ab9ff72389c6feeb1",
+      groupId: "marketing",
+      searchColumn: "description",
+      isEditable: false,
+      columns: [
         {
-          name: "Campaigns",
-          collectionId: "647ab9ff72389c6feeb1",
-          columns: [
-            {
-              key: "name",
-              label: "Name",
-            },
-            {
-              key: "description",
-              label: "Description",
-            },
-            {
-              key: "$collectionId",
-              label: "Collection Id",
-            },
-          ],
+          key: "name",
+          label: "Name",
         },
         {
-          name: "Popups",
-          collectionId: "647e99ee66d5a7b6b739",
-          columns: [
-            {
-              key: "name",
-              label: "Name",
-            },
-            {
-              key: "title_value",
-              label: "Title value",
-            },
-            {
-              key: "description_value",
-              label: "Description value",
-            },
-          ],
+          key: "description",
+          label: "Description",
+        },
+        {
+          key: "$collectionId",
+          label: "Collection Id",
+          enableHiding: false,
+        },
+      ],
+    },
+    {
+      name: "Popups",
+      collectionId: "647e99ee66d5a7b6b739",
+      groupId: "marketing",
+      searchColumn: "name",
+      columns: [
+        {
+          key: "name",
+          label: "Name",
+          className: "w-[100px]",
+        },
+        {
+          key: "title_value",
+          label: "Title value",
+          className: "w-[280px]",
+        },
+        {
+          key: "subtitle_value",
+          label: "Subtitle value",
+          className: "w-[320px]",
+        },
+        {
+          key: "img_url",
+          label: "Image url",
+          className: "w-[150px] overflow-hidden",
+        },
+        {
+          key: "button_value",
+          label: "Button value",
         },
       ],
     },
     {
       name: "Users",
-      collections: [],
-      collectionId: "647e9e66d5a7b6b739",
+      collectionId: "647ab9e71d5e63e69fed",
     },
     {
-      name: "Library",
-      collectionId: "647e99ee66d5a7739",
+      name: "Template Library",
+      collectionId: "647f66884abd6f9cd6dd",
     },
   ],
 };

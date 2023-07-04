@@ -9,7 +9,7 @@ const Sidebar = () => {
         <div className="flex items-center gap-2">
           <Logo className="w-[44px] h-[44px]" />
           <h2 className="text-sm font-semibold text-secondary-foreground">
-            {config.project_name}
+            {config.projectName}
           </h2>
         </div>
         <SidebarNavs />

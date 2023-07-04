@@ -1,7 +1,9 @@
 export interface IConfig {
   endpoint: string;
   projectId: string;
-  project_name: string;
+  projectName: string;
+  projectLogo: string;
   databaseId: string;
+  groups: any[];
   collections: any[]; // TODO: add type
 }

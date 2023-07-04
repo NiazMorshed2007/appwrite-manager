@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,7 +14,17 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import * as React from "react";
 
+import { ArrowRight } from "lucide-react";
+import { Button } from "../../../../../../components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../../../../components/ui/select";
 import {
   Table,
   TableBody,
@@ -23,28 +32,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./table";
-import { Button } from "./button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./select";
-import { ArrowRight } from "lucide-react";
-import { ScrollArea } from "./scroll-area";
+} from "../../../../../../components/ui/table";
+import { DataTableToolbar } from "./data-table-toolbar";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pagination: boolean;
+  searchColumn: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   pagination,
+  searchColumn,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -78,7 +80,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      {/* <DataTableToolbar table={table} /> */}
+      <DataTableToolbar searchColumn={searchColumn} table={table} />
       <div
         style={{
           width: "calc(100vw - 300px)",
