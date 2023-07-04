@@ -1,8 +1,15 @@
 "use client";
 
+import { config } from "@/config/config";
+import {
+  EnvelopeClosedIcon,
+  GearIcon,
+  HomeIcon,
+  PersonIcon,
+} from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 import React, { Dispatch } from "react";
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -12,14 +19,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "../ui/command";
-import {
-  CalendarIcon,
-  EnvelopeClosedIcon,
-  FaceIcon,
-  GearIcon,
-  PersonIcon,
-  RocketIcon,
-} from "@radix-ui/react-icons";
+import { FileText, Home } from "lucide-react";
 
 interface Props {
   open: boolean;
@@ -28,6 +28,7 @@ interface Props {
 
 const SearchCommandBox: React.FC<Props> = (props) => {
   const { open, setOpen } = props;
+  const router = useRouter();
   return (
     <CommandDialog
       open={open}
@@ -35,41 +36,55 @@ const SearchCommandBox: React.FC<Props> = (props) => {
         setOpen(false);
       }}
     >
-      <CommandInput placeholder="Type a command or search..." />
+      <CommandInput placeholder="Search anything..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Suggestions">
-          <CommandItem>
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            <span>Calendar</span>
+
+        <CommandGroup heading="Basic">
+          <CommandItem
+            onSelect={() => {
+              setOpen(false);
+              router.push(`/app`);
+            }}
+          >
+            <Home size={14} className="mr-2" />
+            <span>Overview</span>
           </CommandItem>
-          <CommandItem>
-            <FaceIcon className="mr-2 h-4 w-4" />
-            <span>Search Emoji</span>
-          </CommandItem>
-          <CommandItem>
-            <RocketIcon className="mr-2 h-4 w-4" />
-            <span>Launch</span>
-          </CommandItem>
-        </CommandGroup>
-        <CommandSeparator />
-        <CommandGroup heading="Settings">
-          <CommandItem>
+          <CommandItem
+            onSelect={() => {
+              setOpen(false);
+              router.push(`/app/profile`);
+            }}
+          >
             <PersonIcon className="mr-2 h-4 w-4" />
             <span>Profile</span>
-            <CommandShortcut>⌘P</CommandShortcut>
           </CommandItem>
-          <CommandItem>
-            <EnvelopeClosedIcon className="mr-2 h-4 w-4" />
-            <span>Mail</span>
-            <CommandShortcut>⌘B</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
+          <CommandItem
+            onSelect={() => {
+              setOpen(false);
+              router.push(`/app/settings`);
+            }}
+          >
             <GearIcon className="mr-2 h-4 w-4" />
             <span>Settings</span>
-            <CommandShortcut>⌘S</CommandShortcut>
           </CommandItem>
         </CommandGroup>
+
+        <CommandGroup heading="Collections">
+          {config.collections.map((collection, _) => (
+            <CommandItem
+              onSelect={() => {
+                setOpen(false);
+                router.push(`/app/collections/${collection.collectionId}`);
+              }}
+              key={_}
+            >
+              <FileText size={14} className="mr-2" />
+              <span>{collection.name}</span>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        <CommandSeparator />
       </CommandList>
     </CommandDialog>
   );

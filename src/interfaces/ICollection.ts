@@ -1,16 +1,11 @@
-export interface IBaseCollection {
+import { IColumn } from "./IColumn";
+
+export interface ICollection {
   name: string;
-  collectionId?: string;
-  columns?: any[];
+  collectionId: string;
+  groupId?: string;
+  searchColumn?: string;
+  isEditable?: boolean;
+  isDeleteable?: boolean;
+  columns?: IColumn[];
 }
-
-export interface IGroupCollection extends IBaseCollection {
-  type: "group";
-  collections: ICollection[];
-}
-
-export interface INormalCollection extends IBaseCollection {
-  type?: string;
-}
-
-export type ICollection = IGroupCollection | INormalCollection;

@@ -1,5 +1,13 @@
 import { config } from "@/config/config";
-import { Account, Client as Appwrite, Databases, ID, Storage } from "appwrite";
+import {
+  Account,
+  Client as Appwrite,
+  Databases,
+  ID,
+  Models,
+  Query,
+  Storage,
+} from "appwrite";
 
 const databaseId = config.databaseId;
 
@@ -46,11 +54,19 @@ let api: any = {
         permissions
       );
   },
-
-  getDocuments: (collectionId: string, query: any) => {
+  getDocuments: (
+    collectionId: string,
+    limit: number,
+    offset: number,
+    queries: string[]
+  ) => {
     return api
       .provider()
-      .database.listDocuments(databaseId, collectionId, query);
+      .database.listDocuments(databaseId, collectionId, [
+        Query.limit(limit || 10),
+        Query.offset(offset || 0),
+        ...(queries || []),
+      ]);
   },
 
   getDocument: (collectionId: string, documentId: string) => {

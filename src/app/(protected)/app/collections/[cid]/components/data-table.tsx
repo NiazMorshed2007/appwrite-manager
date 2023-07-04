@@ -34,6 +34,7 @@ import {
   TableRow,
 } from "../../../../../../components/ui/table";
 import { DataTableToolbar } from "./data-table-toolbar";
+import { DataTablePagination } from "./data-table-pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -136,7 +137,10 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {pagination && (
+
+      {pagination && <DataTablePagination table={table} />}
+
+      {/* {pagination && (
         <div className="flex items-center justify-between space-x-2 py-4">
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium">Rows per page: </p>
@@ -180,7 +184,7 @@ export function DataTable<TData, TValue>({
             </Button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

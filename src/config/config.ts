@@ -3,7 +3,7 @@ import { IConfig } from "@/interfaces/IConfig";
 export const config: IConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
   projectId: "6475ca5453bd7b131cd8",
-  projectName: "Popwola Project",
+  projectName: "Appwrite Manager",
   projectLogo: "/logo.png",
   databaseId: "6477edd01cdd300e0b80",
   groups: [
@@ -74,6 +74,18 @@ export const config: IConfig = {
     {
       name: "Template Library",
       collectionId: "647f66884abd6f9cd6dd",
+      columns: [
+        {
+          key: "title_value",
+          label: "Title value",
+          className: "w-[280px]",
+        },
+        {
+          key: "subtitle_value",
+          label: "Subtitle value",
+          className: "w-[320px]",
+        },
+      ],
     },
   ],
 };

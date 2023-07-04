@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import TableSkeleton from "./components/table-skeleton";
 import { DataTable } from "./components/data-table";
+import Link from "next/link";
 
 export default function CollectionPage() {
   const pathname: string = usePathname();
@@ -43,13 +44,11 @@ export default function CollectionPage() {
 
         return (
           <div className="flex items-center gap-[.1em]">
-            <Button size="sm" variant="secondary" className="p-1 px-2">
-              <Eye
-                onClick={() => alert(data)}
-                size={14}
-                className="text-primary"
-              />
-            </Button>
+            <Link href={`/app/collections/${cid}/documents/${data.$id}`}>
+              <Button size="sm" variant="secondary" className="p-1 px-2">
+                <Eye size={14} className="text-primary" />
+              </Button>
+            </Link>
             {staticCollection?.isEditable !== undefined &&
             !staticCollection?.isEditable ? (
               <></>
