@@ -1,5 +1,6 @@
 import { ICollection } from "./ICollection";
 import { IGroup } from "./IGroup";
+import { IShortcut } from "./IShortcut";
 
 export interface IConfig {
   endpoint: string;
@@ -8,5 +9,6 @@ export interface IConfig {
   projectLogo: string;
   databaseId: string;
   groups: IGroup[];
-  collections: ICollection[]; // TODO: add type
+  collections: ICollection[];
+  shortcuts: IShortcut[];
 }

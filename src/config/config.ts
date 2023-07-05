@@ -88,4 +88,18 @@ export const config: IConfig = {
       ],
     },
   ],
+  shortcuts: [
+    {
+      action: "search",
+      keyAfterCtrl: "s",
+    },
+    {
+      action: "filter",
+      keyAfterCtrl: "f",
+    },
+    {
+      action: "searchbox",
+      keyAfterCtrl: "y",
+    },
+  ],
 };

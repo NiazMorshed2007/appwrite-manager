@@ -8,6 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { getShortcutKey } from "@/helpers/getShortcutKey";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Table } from "@tanstack/react-table";
 import { SlidersHorizontal } from "lucide-react";
@@ -21,8 +22,9 @@ export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {
   const [open, setOpen] = useState<boolean>(false);
+  const filterShortcutKey = getShortcutKey("filter");
   const tableViewShortcuts = (e: KeyboardEvent) => {
-    if (e.key === "f" && e.ctrlKey) {
+    if (e.key === filterShortcutKey && e.ctrlKey) {
       e.preventDefault();
       setOpen(true);
     }

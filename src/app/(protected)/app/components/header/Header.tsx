@@ -15,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getShortcutKey } from "@/helpers/getShortcutKey";
 import { ToggleTheme } from "@/theme/ToggleTheme";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Keyboard, LogOut } from "lucide-react";
@@ -24,10 +25,11 @@ import BreadCrumb from "./BreadCrumb";
 
 const DashboardHeader = () => {
   const [searchBoxOpen, setSearchBoxOpen] = useState(false);
+  const searchBoxShortcutKey: string = getShortcutKey("searchbox");
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "k") {
+      if (e.ctrlKey && e.key === searchBoxShortcutKey) {
         e.preventDefault();
         setSearchBoxOpen((searchBoxOpen) => !searchBoxOpen);
       }
@@ -62,7 +64,7 @@ const DashboardHeader = () => {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Ctrl + K</p>
+              <p>Ctrl + {searchBoxShortcutKey}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

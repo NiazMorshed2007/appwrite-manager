@@ -66,33 +66,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     }
   }
 
-  // async function onSubmit(event: React.SyntheticEvent) {
-  //   event.preventDefault();
-  //   setIsLoading(true);
-  //   try {
-  //     await api.createSession();
-  //     toast({
-  //       title: "Login Successful",
-  //       description: "Redirecting you to dashboard...",
-  //     });
-  //     router.replace("/app");
-  //   } catch (err: any) {
-  //     toast({
-  //       title: "Can't login",
-  //       description: err.message,
-  //     });
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
-
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4 pt-12"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="email"
