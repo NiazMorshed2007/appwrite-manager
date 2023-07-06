@@ -4,7 +4,7 @@ export const config: IConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
   projectId: "6475ca5453bd7b131cd8",
   projectName: "Appwrite Manager",
-  projectLogo: "/logo.png",
+  projectLogo: "/logo.svg",
   databaseId: "6477edd01cdd300e0b80",
   groups: [
     {

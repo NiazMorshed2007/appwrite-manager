@@ -1,24 +1,23 @@
-import { Button } from "@/components/ui/button";
-import { ToggleTheme } from "@/theme/ToggleTheme";
-import Link from "next/link";
-import React from "react";
+"use client";
+
+import { getSession } from "@/lib/services/auth.service";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const MainPage = () => {
-  return (
-    <section className="flex flex-col text-center items-center justify-center h-screen">
-      <ToggleTheme />
-      <h1 className="text-3xl font-semibold">Welcome to Appwrite Manager!</h1>
-      <p className="w-7/12">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
-        quasi suscipit explicabo expedita, odit nulla laborum nam asperiores
-        iure hic vero sit est iusto voluptatum obcaecati, eos, blanditiis
-        veritatis modi?
-      </p>
-      <Link href="/login">
-        <Button>Let&apos;go </Button>
-      </Link>
-    </section>
-  );
+  const router = useRouter();
+  useEffect(() => {
+    const check = async () => {
+      try {
+        await getSession();
+        router.replace("/app");
+      } catch (err: any) {
+        router.replace("/login");
+      }
+    };
+    check();
+  }, []);
+  return <></>;
 };
 
 export default MainPage;

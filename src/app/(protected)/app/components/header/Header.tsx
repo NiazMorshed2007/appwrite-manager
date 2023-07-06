@@ -22,6 +22,7 @@ import { Keyboard, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import BreadCrumb from "./BreadCrumb";
+import { logout } from "@/lib/services/auth.service";
 
 const DashboardHeader = () => {
   const [searchBoxOpen, setSearchBoxOpen] = useState(false);
@@ -80,7 +81,7 @@ const DashboardHeader = () => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={logout}>
               <LogOut size={14} className="mr-2" />
               Logout
             </DropdownMenuItem>

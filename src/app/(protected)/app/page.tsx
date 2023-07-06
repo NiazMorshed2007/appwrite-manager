@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import { Graph } from "./components/DemoGraph";
 
 const MainPage = () => {
   return (
@@ -9,7 +11,7 @@ const MainPage = () => {
         itaque. Vero corporis, ipsa suscipit aliquam repudiandae consequatur
         dolorum recusandae nam assum
       </p>
-      <div className="flex items-center gap-2 flex-wrap mt-7">
+      <div className="flex mb-10 items-center gap-2 flex-wrap mt-7">
         <div className="w-[260px] bg-muted-foreground/20 p-5 rounded-lg transition-all border hover:border-secondary-foreground/10">
           <h1 className="text-sm mb-2 text-muted-foreground">
             Total Documents
@@ -37,6 +39,8 @@ const MainPage = () => {
           <h1 className="text-2xl font-medium">100+</h1>
         </div>
       </div>
+
+      <Graph />
     </div>
   );
 };
