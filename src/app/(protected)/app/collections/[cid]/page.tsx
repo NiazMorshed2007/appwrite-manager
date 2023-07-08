@@ -3,38 +3,53 @@
 import api from "@/appwrite/appwrite";
 import { Button } from "@/components/ui/button";
 import { config } from "@/config/config";
+import { findCollectionById } from "@/helpers/findCollectionById";
+import { ICollection } from "@/interfaces/ICollection";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Eye, Pencil, Trash } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import TableSkeleton from "./components/table-skeleton";
-import { DataTable } from "./components/data-table";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { DataTable } from "./components/data-table";
+import TableSkeleton from "./components/table-skeleton";
+import { Models } from "appwrite";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import {
+  selectCurrentPage,
+  selectLimit,
+  selectTotal,
+  setCurrentPage,
+  setLimit,
+  setTotal,
+} from "@/redux/appSlice";
+import { Dispatch } from "@reduxjs/toolkit";
 
 export default function CollectionPage() {
   const pathname: string = usePathname();
   const cid: string = pathname.split("/")[3];
-  const [data, setData] = useState<any>([]);
-  const [staticCollection, setStaticCollection] = useState<any>(null);
+
+  const [data, setData] = useState<Models.Document[]>([]);
+
+  const [staticCollection, setStaticCollection] = useState<ICollection>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [total, setTotal] = useState<number>(0);
+  const [tableLoading, setTableLoading] = useState<boolean>(false);
+
+  const total = useAppSelector(selectTotal);
+  const limit = useAppSelector(selectLimit);
+  const currentPage: number = useAppSelector(selectCurrentPage);
+
+  const dispatch: Dispatch = useAppDispatch();
 
   const getCollectionData = async () => {
-    const data = await api.getDocuments(cid);
+    setTableLoading(true);
+    const data = await api.getDocuments(cid, limit, (currentPage - 1) * limit);
     setLoading(false);
-    setTotal(data.total);
+    setTableLoading(false);
+    dispatch(setTotal(data.total));
     setData(data.documents);
   };
 
-  const findCollectionById = (): void => {
-    for (const collection of config.collections) {
-      if (collection?.collectionId === cid) {
-        setStaticCollection(collection);
-      }
-    }
-  };
-
-  const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<Models.Document>[] = [
     {
       accessorKey: "Actions",
       id: "actions",
@@ -89,7 +104,13 @@ export default function CollectionPage() {
           header: column.label as string,
           enableHiding: column.enableHiding as boolean,
           cell: ({ row }: { row: Row<any> }) => (
-            <p className={column.className}>{row.original[column.key]}</p>
+            <p className={column.className}>
+              {column.type === "date" ? (
+                <>{new Date(row.original[column.key]).toLocaleString()}</>
+              ) : (
+                <>{row.original[column.key]}</>
+              )}
+            </p>
           ),
         }))
       : []),
@@ -97,8 +118,17 @@ export default function CollectionPage() {
 
   useEffect(() => {
     getCollectionData();
-    findCollectionById();
-  }, [cid, config]);
+    console.log("hey I'm fetching data");
+  }, [limit, currentPage]);
+
+  useEffect(() => {
+    setStaticCollection(findCollectionById(cid));
+
+    return () => {
+      dispatch(setTotal(0));
+      dispatch(setCurrentPage(1));
+    };
+  }, [cid]);
 
   return (
     <div>
@@ -116,7 +146,8 @@ export default function CollectionPage() {
           <TableSkeleton />
         ) : (
           <DataTable
-            searchColumn={staticCollection?.searchColumn}
+            loading={tableLoading}
+            searchColumn={staticCollection?.searchColumn!}
             columns={columns}
             pagination={true}
             data={data}

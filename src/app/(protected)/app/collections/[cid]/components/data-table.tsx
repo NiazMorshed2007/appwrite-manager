@@ -16,15 +16,9 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
-import { ArrowRight } from "lucide-react";
-import { Button } from "../../../../../../components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../../../../components/ui/select";
+import { useAppSelector } from "@/hooks/reduxHooks";
+import { selectPageCount } from "@/redux/appSlice";
+import { Loader2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -33,14 +27,15 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../../../components/ui/table";
-import { DataTableToolbar } from "./data-table-toolbar";
 import { DataTablePagination } from "./data-table-pagination";
+import { DataTableToolbar } from "./data-table-toolbar";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pagination: boolean;
   searchColumn: string;
+  loading: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -48,6 +43,7 @@ export function DataTable<TData, TValue>({
   data,
   pagination,
   searchColumn,
+  loading,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -70,6 +66,7 @@ export function DataTable<TData, TValue>({
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    pageCount: useAppSelector(selectPageCount),
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -77,6 +74,8 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+
+    debugTable: true,
   });
 
   return (
@@ -136,55 +135,14 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+        {loading && (
+          <div className="py-5 bg-muted/40 w-full flex items-center justify-center">
+            <Loader2 className="animate-spin" />
+          </div>
+        )}
       </div>
 
       {pagination && <DataTablePagination table={table} />}
-
-      {/* {pagination && (
-        <div className="flex items-center justify-between space-x-2 py-4">
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Rows per page: </p>
-            <Select
-              value={`${table.getState().pagination.pageSize}`}
-              onValueChange={(value) => {
-                table.setPageSize(Number(value));
-              }}
-            >
-              <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue
-                  placeholder={table.getState().pagination.pageSize}
-                />
-              </SelectTrigger>
-              <SelectContent side="top">
-                {[10, 20, 30, 40, 50].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-              <ArrowRight size={15} className="ml-2" />
-            </Button>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }

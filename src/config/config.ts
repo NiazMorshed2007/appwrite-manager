@@ -28,11 +28,6 @@ export const config: IConfig = {
           key: "description",
           label: "Description",
         },
-        {
-          key: "$collectionId",
-          label: "Collection Id",
-          enableHiding: false,
-        },
       ],
     },
     {
@@ -50,6 +45,12 @@ export const config: IConfig = {
           key: "title_value",
           label: "Title value",
           className: "w-[280px]",
+        },
+        {
+          key: "$createdAt",
+          label: "Created at",
+          type: "date",
+          className: "w-[150px]",
         },
         {
           key: "subtitle_value",

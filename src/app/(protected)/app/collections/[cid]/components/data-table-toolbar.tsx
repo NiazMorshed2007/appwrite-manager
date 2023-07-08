@@ -60,7 +60,8 @@ export function DataTableToolbar<TData>({
             />
           </div>
         )}
-        {table.getColumn("status") && (
+        {/* implement filters in future */}
+        {/* {table.getColumn("status") && (
           <DataTableFacetedFilter
             column={table.getColumn("status")}
             title="Status"
@@ -87,7 +88,7 @@ export function DataTableToolbar<TData>({
               },
             ]}
           />
-        )}
+        )} */}
         {isFiltered && (
           <Button
             variant="ghost"

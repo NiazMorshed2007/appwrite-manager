@@ -3,4 +3,5 @@ export interface IColumn {
   label: string;
   enableHiding?: boolean;
   className?: string;
+  type?: string;
 }

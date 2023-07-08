@@ -1,8 +1,10 @@
 "use client";
 import PageLoader from "@/components/shared/PageLoader";
 import { getSession } from "@/lib/services/auth.service";
+import { store } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { Provider } from "react-redux";
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -19,7 +21,18 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
     };
     check();
   }, []);
-  return <> {loading ? <PageLoader /> : <>{children}</>}</>;
+  return (
+    <>
+      {" "}
+      {loading ? (
+        <PageLoader />
+      ) : (
+        <>
+          <Provider store={store}>{children}</Provider>
+        </>
+      )}
+    </>
+  );
 };
 
 export default ProtectedLayout;

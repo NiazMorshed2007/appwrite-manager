@@ -69,10 +69,10 @@ let api: any = {
       ]);
   },
 
-  getDocument: (collectionId: string, documentId: string) => {
+  getDocument: (collectionId: string, documentId: string, queries: any) => {
     return api
       .provider()
-      .database.getDocument(databaseId, collectionId, documentId);
+      .database.getDocument(databaseId, collectionId, documentId, queries);
   },
 
   updateDocument: (collectionId: string, documentId: string, data: JSON) => {
