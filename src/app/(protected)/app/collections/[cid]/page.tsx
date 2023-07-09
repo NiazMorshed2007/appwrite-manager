@@ -2,18 +2,9 @@
 
 import api from "@/appwrite/appwrite";
 import { Button } from "@/components/ui/button";
-import { config } from "@/config/config";
 import { findCollectionById } from "@/helpers/findCollectionById";
-import { ICollection } from "@/interfaces/ICollection";
-import { ColumnDef, Row } from "@tanstack/react-table";
-import { Eye, Pencil, Trash } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { DataTable } from "./components/data-table";
-import TableSkeleton from "./components/table-skeleton";
-import { Models } from "appwrite";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { ICollection } from "@/interfaces/ICollection";
 import {
   selectCurrentPage,
   selectLimit,
@@ -23,6 +14,14 @@ import {
   setTotal,
 } from "@/redux/appSlice";
 import { Dispatch } from "@reduxjs/toolkit";
+import { ColumnDef, Row } from "@tanstack/react-table";
+import { Models } from "appwrite";
+import { Eye, Pencil, Trash } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { DataTable } from "./components/data-table";
+import TableSkeleton from "./components/table-skeleton";
 
 export default function CollectionPage() {
   const pathname: string = usePathname();
@@ -118,7 +117,6 @@ export default function CollectionPage() {
 
   useEffect(() => {
     getCollectionData();
-    console.log("hey I'm fetching data");
   }, [limit, currentPage]);
 
   useEffect(() => {
@@ -127,6 +125,7 @@ export default function CollectionPage() {
     return () => {
       dispatch(setTotal(0));
       dispatch(setCurrentPage(1));
+      dispatch(setLimit(10));
     };
   }, [cid]);
 

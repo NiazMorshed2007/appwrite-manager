@@ -10,9 +10,11 @@ import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import {
   selectCurrentPage,
   selectPageCount,
+  selectTotal,
   setCurrentPage,
   setLimit,
 } from "@/redux/appSlice";
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
@@ -24,48 +26,34 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   const dispatch = useAppDispatch();
-  const pagesCount: number = useAppSelector(selectPageCount);
+  const total = useAppSelector(selectTotal);
+  const totalPages: number = useAppSelector(selectPageCount);
   const currentPage: number = useAppSelector(selectCurrentPage);
-  const [firstPage, setFirstPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
-  const [pages, setPages] = useState<number[]>([]);
+  const [pages, setPages] = useState<any[]>([]);
 
-  const calculatePages = () => {
-    setLastPage(pagesCount);
+  function pagination(page: number, total: number) {
+    const pagesShown = 5;
 
-    let middlePages = [];
-    middlePages.push(currentPage - 1);
-    middlePages.push(currentPage + 1);
-    middlePages.push(currentPage);
-    middlePages = middlePages.filter((p) => p > firstPage && p < lastPage);
-    middlePages = middlePages.sort((a, b) => (a < b ? -1 : 1));
+    const start = Math.max(
+      1,
+      Math.min(page - Math.floor((pagesShown - 3) / 2), total - pagesShown + 2)
+    );
 
-    const updatedPages = [];
-    updatedPages.push(firstPage);
-    if (middlePages[0] !== firstPage + 1) {
-      updatedPages.push(-1);
-    }
-    updatedPages.push(...middlePages);
-    if (middlePages[middlePages.length - 1] !== lastPage - 1) {
-      updatedPages.push(-1);
-    }
-    updatedPages.push(lastPage);
+    const end = Math.min(
+      total,
+      Math.max(page + Math.floor((pagesShown - 2) / 2), pagesShown - 1)
+    );
 
-    if (middlePages.length === 0) {
-      updatedPages.splice(1, 0, lastPage);
-    }
-
-    if (firstPage === lastPage) {
-      updatedPages.splice(1, 0, firstPage);
-    }
-
-    setPages(updatedPages);
-  };
+    return [
+      ...(start > 2 ? [1, "..."] : start > 1 ? [1] : []),
+      ...Array.from({ length: end + 1 - start }, (_, i) => i + start),
+      ...(end < total - 1 ? ["...", total] : end < total ? [total] : []),
+    ];
+  }
 
   useEffect(() => {
-    calculatePages();
-    console.log(pages);
-  }, [firstPage, lastPage, currentPage, pagesCount]);
+    setPages(pagination(currentPage, totalPages));
+  }, [currentPage, totalPages]);
 
   return (
     <div className="flex items-center justify-between px-2">
@@ -75,6 +63,8 @@ export function DataTablePagination<TData>({
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
+              if (currentPage * Number(value) > total)
+                dispatch(setCurrentPage(1));
               dispatch(setLimit(Number(value)));
               table.setPageSize(Number(value));
             }}
@@ -93,36 +83,51 @@ export function DataTablePagination<TData>({
         </div>
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </div>
         <div className="flex items-center space-x-2">
-          {pages &&
-            pages.map((page, i) => (
-              <Button
-                key={i}
-                variant="outline"
-                className={`h-8 w-8 p-0 ${page === -1 ? "opacity-50" : ""}}`}
-                style={{
-                  border: page === -1 ? "none" : "",
-                }}
-                onClick={() => {
-                  dispatch(setCurrentPage(page));
-                }}
-                disabled={currentPage === page || page === -1}
-              >
-                <span className="sr-only">Go to page page</span>
-                <span
-                  className={`${
-                    currentPage === page ? "bg-primary/20 text-primary" : ""
-                  } h-8 w-8 flex items-center justify-center rounded-m
-                hover:bg-primary/10 transition-colors duration-200`}
+          <Button
+            variant="outline"
+            onClick={() => {
+              dispatch(setCurrentPage(currentPage - 1));
+            }}
+            disabled={currentPage <= 1}
+          >
+            <ChevronLeftIcon className="w-4 h-4 mr-2" />
+            Prev
+          </Button>
+          {pages.map((page, index) => (
+            <div key={index} className="pagination-item">
+              {typeof page === "number" ? (
+                <Button
+                  variant="outline"
+                  disabled={currentPage === page}
+                  className={`h-8 w-8 p-0 ${page === -1 ? "opacity-50" : ""}}`}
+                  style={{
+                    border: page === -1 ? "none" : "",
+                  }}
+                  onClick={() => {
+                    dispatch(setCurrentPage(page));
+                  }}
                 >
-                  {page === -1 ? "..." : page}
-                </span>
-              </Button>
-            ))}
+                  <span className="text">{page}</span>
+                </Button>
+              ) : (
+                <div className="div is-text">
+                  <span className="icon">...</span>
+                </div>
+              )}
+            </div>
+          ))}
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              dispatch(setCurrentPage(currentPage + 1));
+            }}
+            disabled={currentPage === totalPages}
+          >
+            Next
+            <ChevronRightIcon className="w-4 h-4 ml-2" />
+          </Button>
         </div>
       </div>
     </div>
