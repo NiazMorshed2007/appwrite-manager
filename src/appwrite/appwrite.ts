@@ -87,16 +87,12 @@ let api: any = {
       .database.deleteDocument(databaseId, collectionId, documentId);
   },
 
-  createFile: (file: any) => {
-    return api
-      .provider()
-      .storage.createFile(process.env.NEXT_PUBLIC_BUCKET_ID, ID.unique(), file);
+  createFile: (bucketId: string, file: any) => {
+    return api.provider().storage.createFile(bucketId, ID.unique(), file);
   },
 
-  getFilePreview: (fileId: string) => {
-    return api
-      .provider()
-      .storage.getFileView(process.env.NEXT_PUBLIC_BUCKET_ID, fileId);
+  getFilePreview: (bucketId: string, fileId: string) => {
+    return api.provider().storage.getFileView(bucketId, fileId);
   },
 };
 

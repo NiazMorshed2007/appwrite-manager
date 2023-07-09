@@ -4,7 +4,6 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash } from "lucide-react";
-import { usePathname } from "next/navigation";
 
 export const columns: ColumnDef<any>[] = [
   {

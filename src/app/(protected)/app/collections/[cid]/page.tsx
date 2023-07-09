@@ -1,10 +1,13 @@
 "use client";
 
 import api from "@/appwrite/appwrite";
+import ViewFile from "@/components/shared/view/ViewFile";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { findCollectionById } from "@/helpers/findCollectionById";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { ICollection } from "@/interfaces/ICollection";
+import { IColumn } from "@/interfaces/IColumn";
 import {
   selectCurrentPage,
   selectLimit,
@@ -13,6 +16,7 @@ import {
   setLimit,
   setTotal,
 } from "@/redux/appSlice";
+import { selectCollection, setCollection } from "@/redux/collectionSlice";
 import { Dispatch } from "@reduxjs/toolkit";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Models } from "appwrite";
@@ -29,7 +33,8 @@ export default function CollectionPage() {
 
   const [data, setData] = useState<Models.Document[]>([]);
 
-  const [staticCollection, setStaticCollection] = useState<ICollection>();
+  const collection: ICollection = useAppSelector(selectCollection);
+
   const [loading, setLoading] = useState<boolean>(true);
   const [tableLoading, setTableLoading] = useState<boolean>(false);
 
@@ -40,12 +45,20 @@ export default function CollectionPage() {
   const dispatch: Dispatch = useAppDispatch();
 
   const getCollectionData = async () => {
-    setTableLoading(true);
-    const data = await api.getDocuments(cid, limit, (currentPage - 1) * limit);
-    setLoading(false);
-    setTableLoading(false);
-    dispatch(setTotal(data.total));
-    setData(data.documents);
+    try {
+      setTableLoading(true);
+      const data = await api.getDocuments(
+        cid,
+        limit,
+        (currentPage - 1) * limit
+      );
+      setLoading(false);
+      setTableLoading(false);
+      dispatch(setTotal(data.total));
+      setData(data.documents);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const columns: ColumnDef<Models.Document>[] = [
@@ -58,13 +71,12 @@ export default function CollectionPage() {
 
         return (
           <div className="flex items-center gap-[.1em]">
-            <Link href={`/app/collections/${cid}/documents/${data.$id}`}>
+            <Link href={`/app/collections/${cid}/view/documents/${data.$id}`}>
               <Button size="sm" variant="secondary" className="p-1 px-2">
                 <Eye size={14} className="text-primary" />
               </Button>
             </Link>
-            {staticCollection?.isEditable !== undefined &&
-            !staticCollection?.isEditable ? (
+            {collection?.isEditable !== undefined && !collection?.isEditable ? (
               <></>
             ) : (
               <Button size="sm" variant="ghost" className="p-1 px-2">
@@ -97,19 +109,25 @@ export default function CollectionPage() {
         );
       },
     },
-    ...(staticCollection?.columns
-      ? staticCollection.columns.map((column: any) => ({
+    ...(collection?.columns
+      ? collection.columns.map((column: IColumn) => ({
           accessorKey: column.key as string,
           header: column.label as string,
           enableHiding: column.enableHiding as boolean,
           cell: ({ row }: { row: Row<any> }) => (
-            <p className={column.className}>
-              {column.type === "date" ? (
-                <>{new Date(row.original[column.key]).toLocaleString()}</>
-              ) : (
-                <>{row.original[column.key]}</>
+            <>
+              {!column.type && <p>{row.original[column.key]}</p>}
+              {column.type === "enum" && (
+                <Badge>{row.original[column.key]}</Badge>
               )}
-            </p>
+              {column.type === "file" && (
+                <ViewFile
+                  className="w-[30px] h-[30px]"
+                  bucketId={column.bucketId}
+                  fileId={row.original[column.key]}
+                />
+              )}
+            </>
           ),
         }))
       : []),
@@ -120,7 +138,8 @@ export default function CollectionPage() {
   }, [limit, currentPage]);
 
   useEffect(() => {
-    setStaticCollection(findCollectionById(cid));
+    const collection: ICollection = findCollectionById(cid)!;
+    dispatch(setCollection(collection));
 
     return () => {
       dispatch(setTotal(0));
@@ -133,7 +152,7 @@ export default function CollectionPage() {
     <div>
       <div className="pt-6 users-table">
         <h1 className="text-2xl mb-1 font-semibold flex items-center gap-3">
-          {staticCollection?.name}
+          {collection?.name}
           <span className="text-xs bg-muted p-1 px-2 font-normal text-foreground rounded-full">
             {total} Documents
           </span>
@@ -146,7 +165,7 @@ export default function CollectionPage() {
         ) : (
           <DataTable
             loading={tableLoading}
-            searchColumn={staticCollection?.searchColumn!}
+            searchColumn={collection?.searchColumn!}
             columns={columns}
             pagination={true}
             data={data}

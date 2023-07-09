@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { ICollection } from "@/interfaces/ICollection";
 import {
   selectCurrentPage,
   selectPageCount,
@@ -14,6 +15,7 @@ import {
   setCurrentPage,
   setLimit,
 } from "@/redux/appSlice";
+import { selectCollection } from "@/redux/collectionSlice";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
@@ -26,6 +28,9 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   const dispatch = useAppDispatch();
+
+  const collection: ICollection = useAppSelector(selectCollection);
+
   const total = useAppSelector(selectTotal);
   const totalPages: number = useAppSelector(selectPageCount);
   const currentPage: number = useAppSelector(selectCurrentPage);
@@ -73,11 +78,23 @@ export function DataTablePagination<TData>({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
+              {collection.settings?.limitOptions ? (
+                <>
+                  {collection?.settings?.limitOptions?.map((pageSize) => (
+                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                      {pageSize}
+                    </SelectItem>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {[10, 20, 30, 40, 50, 100].map((pageSize) => (
+                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                      {pageSize}
+                    </SelectItem>
+                  ))}
+                </>
+              )}
             </SelectContent>
           </Select>
         </div>

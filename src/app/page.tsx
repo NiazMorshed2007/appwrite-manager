@@ -1,5 +1,6 @@
 "use client";
 
+import PageLoader from "@/components/shared/PageLoader";
 import { getSession } from "@/lib/services/auth.service";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -17,7 +18,7 @@ const MainPage = () => {
     };
     check();
   }, []);
-  return <></>;
+  return <PageLoader />;
 };
 
 export default MainPage;

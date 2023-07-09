@@ -2,89 +2,78 @@ import { IConfig } from "@/interfaces/IConfig";
 
 export const config: IConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
-  projectId: "6475ca5453bd7b131cd8",
+  projectId: "ecommerceapplication",
   projectName: "Appwrite Manager",
   projectLogo: "/logo.svg",
-  databaseId: "6477edd01cdd300e0b80",
+  databaseId: "ecommercedb",
   groups: [
     {
-      name: "Marketing",
-      id: "marketing",
+      name: "Basic",
+      id: "basic",
     },
   ],
   collections: [
     {
-      name: "Campaigns",
-      collectionId: "647ab9ff72389c6feeb1",
-      groupId: "marketing",
-      searchColumn: "description",
-      isEditable: false,
-      columns: [
-        {
-          key: "name",
-          label: "Name",
-        },
-        {
-          key: "description",
-          label: "Description",
-        },
-      ],
-    },
-    {
-      name: "Popups",
-      collectionId: "647e99ee66d5a7b6b739",
-      groupId: "marketing",
-      searchColumn: "name",
-      columns: [
-        {
-          key: "name",
-          label: "Name",
-          className: "w-[100px]",
-        },
-        {
-          key: "title_value",
-          label: "Title value",
-          className: "w-[280px]",
-        },
-        {
-          key: "$createdAt",
-          label: "Created at",
-          type: "date",
-          className: "w-[150px]",
-        },
-        {
-          key: "subtitle_value",
-          label: "Subtitle value",
-          className: "w-[320px]",
-        },
-        {
-          key: "img_url",
-          label: "Image url",
-          className: "w-[150px] overflow-hidden",
-        },
-        {
-          key: "button_value",
-          label: "Button value",
-        },
-      ],
-    },
-    {
       name: "Users",
-      collectionId: "647ab9e71d5e63e69fed",
-    },
-    {
-      name: "Template Library",
-      collectionId: "647f66884abd6f9cd6dd",
+      collectionId: "64aa8577938fb15d8e76",
+      groupId: "basic",
+      searchColumn: "email",
+      pages: {
+        view: {
+          title: "User Details",
+          description: "Deatils of the user",
+        },
+        edit: {
+          title: "Edit User Details",
+          description: "Edit the user",
+        },
+      },
       columns: [
         {
-          key: "title_value",
-          label: "Title value",
-          className: "w-[280px]",
+          key: "name",
+          label: "Name",
+          rules: {
+            required: true,
+          },
         },
         {
-          key: "subtitle_value",
-          label: "Subtitle value",
-          className: "w-[320px]",
+          key: "email",
+          label: "email",
+          rules: {
+            type: "email",
+          },
+        },
+        {
+          key: "username",
+          label: "Username",
+        },
+        {
+          key: "avatar",
+          label: "Avatar",
+          type: "file",
+          bucketId: "64aa8adeea3f1d90dd1e",
+          className: "rounded-md",
+          rules: {
+            required: false,
+          },
+        },
+        {
+          key: "mobileNo",
+          label: "Mobile No",
+          rules: {
+            type: "tel",
+          },
+        },
+        {
+          key: "role",
+          label: "Role",
+          type: "enum",
+          options: ["user", "admin"],
+          rules: {
+            // defaultValue: "user",
+            required: true,
+            placeholder: "Select user role",
+          },
         },
       ],
     },
