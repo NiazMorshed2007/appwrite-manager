@@ -17,7 +17,7 @@ export const config: IConfig = {
       name: "Users",
       collectionId: "64aa8577938fb15d8e76",
       groupId: "basic",
-      searchColumn: "email",
+      searchColumn: "name",
       pages: {
         view: {
           title: "User Details",
@@ -74,6 +74,31 @@ export const config: IConfig = {
             required: true,
             placeholder: "Select user role",
           },
+        },
+      ],
+    },
+    {
+      name: "Products",
+      collectionId: "64aa86c273d6c0b91a0e",
+      searchColumn: "name",
+      columns: [
+        {
+          key: "name",
+          label: "Product Name",
+        },
+        {
+          key: "price",
+          label: "Price",
+        },
+        {
+          key: "shortDescription",
+          label: "Short Description",
+        },
+        {
+          key: "img",
+          label: "Product Image",
+          type: "file",
+          bucketId: "64ab87a0338ed7395f52",
         },
       ],
     },

@@ -26,10 +26,21 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DataTable } from "./components/data-table";
 import TableSkeleton from "./components/table-skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function CollectionPage() {
   const pathname: string = usePathname();
   const cid: string = pathname.split("/")[3];
+
+  const { toast } = useToast();
 
   const [data, setData] = useState<Models.Document[]>([]);
 
@@ -38,11 +49,33 @@ export default function CollectionPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [tableLoading, setTableLoading] = useState<boolean>(false);
 
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
   const total = useAppSelector(selectTotal);
   const limit = useAppSelector(selectLimit);
   const currentPage: number = useAppSelector(selectCurrentPage);
 
   const dispatch: Dispatch = useAppDispatch();
+
+  const handleDelete = async (did: string) => {
+    setIsDeleting(true);
+    try {
+      await api.deleteDocument(cid, did);
+      getCollectionData();
+      toast({ title: "Document Deleted" });
+      setDeleteDialogOpen(false);
+    } catch (err: any) {
+      console.log(err);
+      toast({
+        title: "Can't delete document",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const getCollectionData = async () => {
     try {
@@ -79,22 +112,47 @@ export default function CollectionPage() {
             {collection?.isEditable !== undefined && !collection?.isEditable ? (
               <></>
             ) : (
-              <Button size="sm" variant="ghost" className="p-1 px-2">
-                <Pencil
-                  onClick={() => alert(data)}
-                  size={14}
-                  className="text-primary"
-                />
-              </Button>
+              <Link href={`/app/collections/${cid}/edit/documents/${data.$id}`}>
+                <Button size="sm" variant="ghost" className="p-1 px-2">
+                  <Pencil size={14} className="text-primary" />
+                </Button>
+              </Link>
             )}
-            <Button
-              className="p-1 px-2"
-              size={"sm"}
-              variant="ghost"
-              onClick={() => alert("Will Delete" + data)}
+            <Dialog
+              open={deleteDialogOpen}
+              onOpenChange={() => {
+                setDeleteDialogOpen(!deleteDialogOpen);
+              }}
             >
-              <Trash size={14} className="text-red-400" />
-            </Button>
+              <DialogTrigger>
+                <Button className="p-1 px-2" size={"sm"} variant="ghost">
+                  <Trash size={14} className="text-red-400" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle className="text-red-500">
+                  Are you sure?
+                </DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  This action is irreversible. You will not be able to recover
+                </DialogDescription>
+                <div className="flex items-center gap-4 justify-end">
+                  <DialogClose>
+                    <Button variant="ghost">Cancel</Button>
+                  </DialogClose>
+                  <Button
+                    disabled={isDeleting}
+                    onClick={() => {
+                      handleDelete(data.$id);
+                    }}
+                    variant={"destructive"}
+                  >
+                    <Trash size={14} className="mr-3" />
+                    Delete
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         );
       },

@@ -18,7 +18,7 @@ import { TrashIcon, UpdateIcon } from "@radix-ui/react-icons";
 import { Models } from "appwrite";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const EditDocument = () => {
@@ -27,6 +27,7 @@ const EditDocument = () => {
   const did: string = pathname.split("/")[6];
 
   const { toast } = useToast();
+  const router = useRouter();
 
   const [document, setDocument] = useState<Models.Document>(
     {} as Models.Document
@@ -113,11 +114,14 @@ const EditDocument = () => {
         <>
           <div className="top sticky top-0 bg-background/80 backdrop-blur-sm z-[1] flex py-4 items-center justify-between gap-4 mb-7">
             <div className="flex items-center gap-4">
-              <Link href={`/app/collections/${cid}/view/documents/${did}`}>
-                <div className="back-circle w-[30px] h-[30px] rounded-full bg-muted flex items-center justify-center">
-                  <ChevronLeft size={15} className="text-primary" />
-                </div>
-              </Link>
+              <div
+                onClick={() => {
+                  router.back();
+                }}
+                className="back-circle cursor-pointer  w-[30px] h-[30px] rounded-full bg-muted flex items-center justify-center"
+              >
+                <ChevronLeft size={15} className="text-primary" />
+              </div>
               <div>
                 <h1 className="text-2xl  font-semibold flex items-center gap-3">
                   {collection?.pages?.edit?.title || "Update Document"}
@@ -133,7 +137,6 @@ const EditDocument = () => {
                 onClick={() => {
                   handleUpdate();
                 }}
-                size={"sm"}
                 disabled={isUpdating}
                 className="text-xs"
               >
@@ -141,14 +144,6 @@ const EditDocument = () => {
                   className={`mr-2 ${isUpdating ? "animate-spin" : ""}`}
                 />{" "}
                 Update
-              </Button>
-              <Button
-                size={"sm"}
-                disabled={isUpdating}
-                className="text-xs"
-                variant={"destructive"}
-              >
-                <TrashIcon className="mr-2" /> Delete
               </Button>
             </div>
           </div>
